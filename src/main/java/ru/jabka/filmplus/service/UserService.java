@@ -7,11 +7,9 @@ import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.payload.NewUserPayload;
 import ru.jabka.filmplus.payload.UpdateUserPayload;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class UserService {

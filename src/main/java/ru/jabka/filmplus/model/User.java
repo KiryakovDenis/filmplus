@@ -1,7 +1,6 @@
 package ru.jabka.filmplus.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.jabka.filmplus.exception.BadRequestException;
 
 import java.time.LocalDate;
