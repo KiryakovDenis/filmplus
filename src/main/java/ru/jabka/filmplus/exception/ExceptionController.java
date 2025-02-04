@@ -1,5 +1,7 @@
 package ru.jabka.filmplus.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,4 +21,11 @@ public class ExceptionController {
         return ResponseEntity.internalServerError()
                 .body(new ApiError(e.getMessage()));
     }
+
+    @ExceptionHandler(FilmNotFoundException.class)
+    public ResponseEntity<ApiError> handleFilmNotFoundException(FilmNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError(e.getMessage()));
+    }
+
 }

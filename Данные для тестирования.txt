@@ -1,0 +1,52 @@
+#Users
+{
+  "id": 0,
+  "name": "Иванов И",
+  "email": "IIvanov@mail.ru",
+  "login": "IIvanov",
+  "birthday": "2010-02-04"
+}
+
+{
+  "id": 0,
+  "name": "Петров П",
+  "email": "PPetrov@mail.ru",
+  "login": "PPetrov",
+  "birthday": "2010-05-28"
+}
+
+#Films
+{
+  "id": 0,
+  "name": "Фильм 1",
+  "description": "Хороший фильм",
+  "releaseDate": "2025-02-03",
+  "duration": 1,
+  "genres": "COMEDY"
+}
+
+{
+  "id": 0,
+  "name": "Фильм 2",
+  "description": "Очень хороший фильм",
+  "releaseDate": "2024-12-03",
+  "duration": 1,
+  "genres": "ACTION"
+}
+
+
+{
+  "id": 0,
+  "name": "Фильм 3",
+  "description": "Очень Очень хороший фильм",
+  "releaseDate": "2024-12-04",
+  "duration": 2,
+  "genres": "DETECTIVE"
+}
+
+
+{
+  "userId": 2,
+  "filmId": 1,
+  "message": "Отличный фильм пойду еще"
+}
