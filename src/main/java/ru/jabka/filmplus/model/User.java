@@ -65,9 +65,6 @@ public class User {
     }
 
     public User addFriend(User friend) {
-        if (this.id.equals(friend.getId())) {
-            throw new BadRequestException("Пользователь не может добавить в качестве друга самого себя");
-        }
 
         this.friends.put(friend.getId(), friend.getName());
         return this;

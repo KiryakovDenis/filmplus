@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.jabka.filmplus.exception.FilmNotFoundException;
 import ru.jabka.filmplus.model.Film;
 import ru.jabka.filmplus.model.Genre;
-import ru.jabka.filmplus.model.Review;
-import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.payload.NewFilmPayload;
 import ru.jabka.filmplus.payload.NewReviewPayload;
 import ru.jabka.filmplus.payload.UpdateFilmPayload;
@@ -48,7 +47,7 @@ public class FilmController {
     @GetMapping("/{id}")
     @Operation(summary = "Найти фильм по идентификатору")
     public Film get(@PathVariable final Long id) {
-        return this.filmService.getById(id);
+        return this.filmService.getById(id).orElseThrow(FilmNotFoundException.create(id));
     }
 
     @PatchMapping()
@@ -65,15 +64,15 @@ public class FilmController {
 
     @GetMapping
     @Operation(summary = "Поиск фильма по жанру, названию, или периода по дате выхода")
-    public List<Film> findFilm(@RequestParam(required = false, name="begin_date")
+    public List<Film> search(@RequestParam(required = false, name="begin_date")
                                @JsonFormat(pattern = "yyyy-MM-dd")
                                @Parameter(description = "Дата начала периода поиска фильмов") LocalDate beginDate,
-                               @RequestParam(required = false, name="end_date")
+                             @RequestParam(required = false, name="end_date")
                                @JsonFormat(pattern = "yyyy-MM-dd")
                                @Parameter(description = "Дата окончания периода поиска фильмов") LocalDate endDate,
-                               @RequestParam(required = false, name="genre")
+                             @RequestParam(required = false, name="genre")
                                @Parameter(description = "Жанр фильма") Genre genre,
-                               @RequestParam(required = false, name="name")
+                             @RequestParam(required = false, name="name")
                                @Parameter(description = "Наименование фильма") String name) {
         return this.filmService.findFilmByPeriodGenreName(beginDate, endDate, genre, name);
     }
@@ -82,28 +81,13 @@ public class FilmController {
     @Operation(summary = "Лайк фильму")
     public void like(@PathVariable(name = "id") Long id,
                      @PathVariable(name = "userId") Long userId) {
-        User existUser = userService.getById(userId);
         this.filmService.like(id, userId);
     }
 
-    @PostMapping("/{id}/dislike/{userId}")
-    @Operation(summary = "Дизлайк фильму")
-    public void dislike(@PathVariable(name = "id") Long id,
-                        @PathVariable(name = "userId") Long userId) {
-        User existUser = userService.getById(userId);
-        this.filmService.dislike(id, userId);
-    }
-
-    @PostMapping("/{id}/review")
+    @PostMapping("/review")
     @Operation(summary = "Отзыв на фильм")
     public void review(@RequestBody final NewReviewPayload review) {
-        User existUser = userService.getById(review.getUserId());
-        this.filmService.review(review);
+        filmService.review(review);
     }
 
-    @GetMapping("/{id}/review")
-    @Operation(summary = "Список отзывов на фильм")
-    public List<Review> getReview(@PathVariable(name = "id") final Long id) {
-        return this.filmService.getReviews(id);
-    }
 }

@@ -52,10 +52,4 @@ public class UserController {
         userService.delete(id);
     }
 
-    @PostMapping("/{id}/friend")
-    @Operation(summary = "Добавить пользователю друга")
-    public User addFriend(@PathVariable(name="id") Long id,
-                          @RequestParam(required = true) Long friendId) {
-        return this.userService.addFriend(id, friendId);
-    }
 }

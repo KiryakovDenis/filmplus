@@ -1,6 +1,8 @@
 package ru.jabka.filmplus.service;
 
+import jakarta.validation.constraints.Null;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.exception.FilmNotFoundException;
 import ru.jabka.filmplus.model.Film;
@@ -13,6 +15,7 @@ import ru.jabka.filmplus.payload.UpdateFilmPayload;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,15 +38,14 @@ public class FilmService {
         return newFilm;
     }
 
-    public Film getById(Long id) {
+    public Optional<Film> getById(Long id) {
         return this.films
                 .stream().filter(f -> f.getId().equals(id))
-                .findFirst()
-                .orElseThrow(FilmNotFoundException.create(id));
+                .findFirst();
     }
 
     public Film update(final UpdateFilmPayload film) {
-        Film existFilm = getById(film.getId());
+        Film existFilm = getById(film.getId()).orElse(null);
 
         if (existFilm == null) {
             return null;
@@ -62,17 +64,48 @@ public class FilmService {
     }
 
     public void delete(final long id) {
-        this.films.remove(getById(id));
+        this.films.remove(getById(id).orElseThrow(FilmNotFoundException.create(id)));
+    }
+
+        public List<Film> findFilmByPeriodGenreName(LocalDate beginDate,
+                                                LocalDate endDate,
+                                                Genre genre,
+                                                String name) {
+        return this.films.stream()
+                .filter(f -> {
+                            boolean genreMatches = genre == null || f.getGenres().equals(genre);
+                            boolean nameMatches = !StringUtils.hasText(name) || f.getName().equals(name);
+                            return genreMatches && nameMatches && dateMatches(f.getReleaseDate(), beginDate, endDate);
+                        }
+                ).toList();
+    }
+
+    public void like(final Long filmId, Long userId) {
+        this.getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).like(userId);
+    }
+
+    public void dislike(final Long filmId, final Long userId) {
+        this.getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).dislike(userId);
+    }
+
+    public void review(NewReviewPayload review) {
+        this.getById(review.getFilmId())
+                .orElseThrow(FilmNotFoundException.create(review.getFilmId()))
+                    .addReview(new Review(review.getMessage(), review.getUserId()));
+    }
+
+    public List<Review> getReviews(final Long filmId) {
+        return getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).getReviews();
     }
 
     private void validate(Film film) {
-        if (film.getName() == null) {
+        if (!StringUtils.hasText(film.getName())) {
             throw new BadRequestException("Заполните наименование фильма");
         }
         if (film.getDuration() == null) {
             throw new BadRequestException("Укажите длительность фильма");
         }
-        if (film.getDescription() == null) {
+        if (!StringUtils.hasText(film.getDescription())) {
             throw new BadRequestException("Заполните описание фильма");
         }
         if (film.getGenres() == null) {
@@ -81,55 +114,23 @@ public class FilmService {
         if (film.getReleaseDate() == null) {
             throw new BadRequestException("Заполните дату выхода фильма");
         }
-        if (film.getId() == null) {
-            throw new BadRequestException("Не указан ID");
-        }
     }
 
-    public List<Film> findFilmByPeriodGenreName(LocalDate beginDate,
-                                                LocalDate endDate,
-                                                Genre genre,
-                                                String name) {
-        return this.films.stream()
-                .filter(f -> (
-                                //Жанр заполнен или нет
-                                ((genre == null) || f.getGenres().equals(genre)) &&
-                                //Имя заполнено, или нет
-                                ((name == null) || f.getName().equals(name)) &&
-                                //Заполнены обе даты или только одна из них
-                                (
-                                    (beginDate == null && endDate == null) ||
-                                    (
-                                            (beginDate != null && endDate == null) &&
-                                            (f.getReleaseDate().isAfter(beginDate))
-                                    ) ||
-                                    (
-                                            (beginDate == null && endDate != null) &&
-                                            (f.getReleaseDate().isBefore(endDate))
-                                    )||
-                                    (
-                                            (beginDate != null && endDate != null) &&
-                                            (f.getReleaseDate().isBefore(endDate)) &&
-                                            (f.getReleaseDate().isAfter(beginDate))
-                                    )
-                                )
-                            )
-                ).toList();
-    }
+    private boolean dateMatches(LocalDate releaseDate, LocalDate beginDate, LocalDate endDate) {
+        //Заданы обе даты периода
+        boolean periodNotInitialized = (beginDate == null && endDate == null);
+        //Задана только дата начала периода
+        boolean endDateNotInitialized = (beginDate != null && endDate == null) && (releaseDate.isAfter(beginDate));
+        //Задана только дата окончания периода
+        boolean beginDateNotInitialized = (beginDate == null && endDate != null) && (releaseDate.isBefore(endDate));
+        //Заданы обе даты периода
+        boolean allDateInitialized = (beginDate != null && endDate != null) &&
+                                        (releaseDate.isBefore(endDate)) &&
+                                            (releaseDate.isAfter(beginDate));
 
-    public void like(final Long filmId, Long userId) {
-        this.getById(filmId).like(userId);
-    }
-
-    public void dislike(final Long filmId, final Long userId) {
-        this.getById(filmId).dislike(userId);
-    }
-
-    public void review(NewReviewPayload review) {
-        this.getById(review.getFilmId()).addReview(new Review(review.getMessage(), review.getUserId()));
-    }
-
-    public List<Review> getReviews(final Long filmId) {
-        return getById(filmId).getReviews();
+        return periodNotInitialized ||
+                endDateNotInitialized ||
+                beginDateNotInitialized ||
+                allDateInitialized;
     }
 }

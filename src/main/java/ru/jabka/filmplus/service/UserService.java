@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
+import ru.jabka.filmplus.payload.NewUserFriendPayload;
 import ru.jabka.filmplus.payload.NewUserPayload;
 import ru.jabka.filmplus.payload.UpdateUserPayload;
 
@@ -69,10 +70,18 @@ public class UserService {
         if (!StringUtils.hasText(user.getEmail())) {
             throw new BadRequestException("Необходимо указать адрес электронной почты пользователя!");
         }
+
+        if (user.getBirthday() == null) {
+            throw new BadRequestException("Необходимо указать день рождения пользователя!");
+        }
+
+        if (!StringUtils.hasText(user.getLogin())) {
+            throw new BadRequestException("Необходимо указать логин пользователя!");
+        }
     }
 
-    public User addFriend(final Long userId, final Long friendId) {
-        return getById(userId).addFriend(getById(friendId));
+    public User addFriend(final NewUserFriendPayload userFriendPayload) {
+        return getById(userFriendPayload.getUserId()).addFriend(getById(userFriendPayload.getFriendId()));
     }
 
     public Map<Long, String> getFriendsById(final Long id) {
