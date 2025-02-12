@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.payload.NewUserFriendPayload;
 import ru.jabka.filmplus.service.UserService;
 
 @RestController
-@RequestMapping("/api/v1/friends")
+@RequestMapping("/api/v1/friend")
 @Tag(name = "Друзья пользователей")
 public class UserFriendController {
 
@@ -22,15 +21,9 @@ public class UserFriendController {
         this.userService = userService;
     }
 
-    @PostMapping("/{id}/friend")
+    @PostMapping()
     @Operation(summary = "Добавить пользователю друга")
     public User addFriend(@RequestBody NewUserFriendPayload userFriendPayload) {
-        if (userFriendPayload.getUserId().equals(userFriendPayload.getFriendId())) {
-            throw new BadRequestException("Пользователь не может добавить в качестве друга самого себя");
-        }
         return this.userService.addFriend(userFriendPayload);
     }
-
-
-
 }

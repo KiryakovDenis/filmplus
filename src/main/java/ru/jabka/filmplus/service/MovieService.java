@@ -1,30 +1,28 @@
 package ru.jabka.filmplus.service;
 
-import jakarta.validation.constraints.Null;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
-import ru.jabka.filmplus.exception.FilmNotFoundException;
-import ru.jabka.filmplus.model.Film;
+import ru.jabka.filmplus.exception.MovieNotFoundException;
+import ru.jabka.filmplus.model.Movie;
 import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.model.Review;
-import ru.jabka.filmplus.payload.NewFilmPayload;
+import ru.jabka.filmplus.payload.LikePayload;
+import ru.jabka.filmplus.payload.NewMoviePayload;
 import ru.jabka.filmplus.payload.NewReviewPayload;
-import ru.jabka.filmplus.payload.UpdateFilmPayload;
-
+import ru.jabka.filmplus.payload.UpdateMoviePayload;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class FilmService {
+public class MovieService {
 
-    private static final Set<Film> films = new HashSet<>();
+    private static final Set<Movie> MOVIES = new HashSet<>();
 
-    public Film create(NewFilmPayload film) {
-        Film newFilm =  new Film((long)films.size() + 1,
+    public Movie create(NewMoviePayload film) {
+        Movie newMovie =  new Movie((long) MOVIES.size() + 1,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -32,46 +30,42 @@ public class FilmService {
                 film.getGenres()
         );
 
-        validate(newFilm);
+        validate(newMovie);
 
-        films.add(newFilm);
-        return newFilm;
+        MOVIES.add(newMovie);
+        return newMovie;
     }
 
-    public Optional<Film> getById(Long id) {
-        return this.films
+    public Movie getById(Long id) {
+        return this.MOVIES
                 .stream().filter(f -> f.getId().equals(id))
-                .findFirst();
+                .findFirst().orElseThrow(MovieNotFoundException.create(id));
     }
 
-    public Film update(final UpdateFilmPayload film) {
-        Film existFilm = getById(film.getId()).orElse(null);
+    public Movie update(final UpdateMoviePayload film) {
+        Movie existMovie = getById(film.getId());
 
-        if (existFilm == null) {
-            return null;
-        }
+        existMovie.setName(film.getName());
+        existMovie.setDescription(film.getDescription());
+        existMovie.setDuration(film.getDuration());
+        existMovie.setGenres(film.getGenres());
+        existMovie.setReleaseDate(film.getReleaseDate());
 
-        existFilm.setName(film.getName());
-        existFilm.setDescription(film.getDescription());
-        existFilm.setDuration(film.getDuration());
-        existFilm.setGenres(film.getGenres());
-        existFilm.setReleaseDate(film.getReleaseDate());
+        validate(existMovie);
 
-        validate(existFilm);
-
-        return existFilm;
+        return existMovie;
 
     }
 
     public void delete(final long id) {
-        this.films.remove(getById(id).orElseThrow(FilmNotFoundException.create(id)));
+        this.MOVIES.remove(getById(id));
     }
 
-        public List<Film> findFilmByPeriodGenreName(LocalDate beginDate,
-                                                LocalDate endDate,
-                                                Genre genre,
-                                                String name) {
-        return this.films.stream()
+    public List<Movie> search(LocalDate beginDate,
+                              LocalDate endDate,
+                              Genre genre,
+                              String name) {
+        return this.MOVIES.stream()
                 .filter(f -> {
                             boolean genreMatches = genre == null || f.getGenres().equals(genre);
                             boolean nameMatches = !StringUtils.hasText(name) || f.getName().equals(name);
@@ -80,38 +74,28 @@ public class FilmService {
                 ).toList();
     }
 
-    public void like(final Long filmId, Long userId) {
-        this.getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).like(userId);
-    }
-
-    public void dislike(final Long filmId, final Long userId) {
-        this.getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).dislike(userId);
+    public void like(final LikePayload like) {
+        this.getById(like.getMovieId()).like(like.getUserId());
     }
 
     public void review(NewReviewPayload review) {
-        this.getById(review.getFilmId())
-                .orElseThrow(FilmNotFoundException.create(review.getFilmId()))
-                    .addReview(new Review(review.getMessage(), review.getUserId()));
+        this.getById(review.getFilmId()).addReview(new Review(review.getMessage(), review.getUserId()));
     }
 
-    public List<Review> getReviews(final Long filmId) {
-        return getById(filmId).orElseThrow(FilmNotFoundException.create(filmId)).getReviews();
-    }
-
-    private void validate(Film film) {
-        if (!StringUtils.hasText(film.getName())) {
+    private void validate(Movie movie) {
+        if (!StringUtils.hasText(movie.getName())) {
             throw new BadRequestException("Заполните наименование фильма");
         }
-        if (film.getDuration() == null) {
+        if (movie.getDuration() == null) {
             throw new BadRequestException("Укажите длительность фильма");
         }
-        if (!StringUtils.hasText(film.getDescription())) {
+        if (!StringUtils.hasText(movie.getDescription())) {
             throw new BadRequestException("Заполните описание фильма");
         }
-        if (film.getGenres() == null) {
+        if (movie.getGenres() == null) {
             throw new BadRequestException("Укажите жанр");
         }
-        if (film.getReleaseDate() == null) {
+        if (movie.getReleaseDate() == null) {
             throw new BadRequestException("Заполните дату выхода фильма");
         }
     }

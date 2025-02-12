@@ -9,7 +9,6 @@ import ru.jabka.filmplus.payload.NewUserPayload;
 import ru.jabka.filmplus.payload.UpdateUserPayload;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -81,11 +80,9 @@ public class UserService {
     }
 
     public User addFriend(final NewUserFriendPayload userFriendPayload) {
+        if (userFriendPayload.getUserId().equals(userFriendPayload.getFriendId())) {
+            throw new BadRequestException("Пользователь не может добавить в качестве друга самого себя");
+        }
         return getById(userFriendPayload.getUserId()).addFriend(getById(userFriendPayload.getFriendId()));
     }
-
-    public Map<Long, String> getFriendsById(final Long id) {
-        return getById(id).getFriends();
-    }
-
 }

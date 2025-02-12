@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.jabka.filmplus.exception.FilmNotFoundException;
-import ru.jabka.filmplus.model.Film;
+import ru.jabka.filmplus.model.Movie;
 import ru.jabka.filmplus.model.Genre;
-import ru.jabka.filmplus.payload.NewFilmPayload;
-import ru.jabka.filmplus.payload.NewReviewPayload;
-import ru.jabka.filmplus.payload.UpdateFilmPayload;
-import ru.jabka.filmplus.service.FilmService;
+import ru.jabka.filmplus.payload.NewMoviePayload;
+import ru.jabka.filmplus.payload.UpdateMoviePayload;
+import ru.jabka.filmplus.service.MovieService;
 import ru.jabka.filmplus.service.UserService;
 
 import java.time.LocalDate;
@@ -28,66 +26,50 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/film")
 @Tag(name = "Фильмы")
-public class FilmController {
+public class MovieController {
 
-    public final FilmService filmService;
-    public final UserService userService;
+    public final MovieService movieService;
 
-    public FilmController(FilmService filmService, UserService userService) {
-        this.filmService = filmService;
-        this.userService = userService;
+    public MovieController(MovieService movieService, UserService userService) {
+        this.movieService = movieService;
     }
 
     @PostMapping
     @Operation(summary = "Создать фильм")
-    public Film create(@RequestBody final NewFilmPayload film) {
-        return this.filmService.create(film);
+    public Movie create(@RequestBody final NewMoviePayload film) {
+        return this.movieService.create(film);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Найти фильм по идентификатору")
-    public Film get(@PathVariable final Long id) {
-        return this.filmService.getById(id).orElseThrow(FilmNotFoundException.create(id));
+    public Movie get(@PathVariable final Long id) {
+        return this.movieService.getById(id);
     }
 
     @PatchMapping()
     @Operation(summary = "Обновление информации о фильме")
-    public Film update(@RequestBody final UpdateFilmPayload film) {
-        return this.filmService.update(film);
+    public Movie update(@RequestBody final UpdateMoviePayload film) {
+        return this.movieService.update(film);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление фильма")
     public void delete(@PathVariable final Long id) {
-        this.filmService.delete(id);
+        this.movieService.delete(id);
     }
 
     @GetMapping
     @Operation(summary = "Поиск фильма по жанру, названию, или периода по дате выхода")
-    public List<Film> search(@RequestParam(required = false, name="begin_date")
+    public List<Movie> search(@RequestParam(required = false, name="begin_date")
                                @JsonFormat(pattern = "yyyy-MM-dd")
                                @Parameter(description = "Дата начала периода поиска фильмов") LocalDate beginDate,
-                             @RequestParam(required = false, name="end_date")
+                              @RequestParam(required = false, name="end_date")
                                @JsonFormat(pattern = "yyyy-MM-dd")
                                @Parameter(description = "Дата окончания периода поиска фильмов") LocalDate endDate,
-                             @RequestParam(required = false, name="genre")
+                              @RequestParam(required = false, name="genre")
                                @Parameter(description = "Жанр фильма") Genre genre,
-                             @RequestParam(required = false, name="name")
+                              @RequestParam(required = false, name="name")
                                @Parameter(description = "Наименование фильма") String name) {
-        return this.filmService.findFilmByPeriodGenreName(beginDate, endDate, genre, name);
+        return this.movieService.search(beginDate, endDate, genre, name);
     }
-
-    @PostMapping("/{id}/like/{userId}")
-    @Operation(summary = "Лайк фильму")
-    public void like(@PathVariable(name = "id") Long id,
-                     @PathVariable(name = "userId") Long userId) {
-        this.filmService.like(id, userId);
-    }
-
-    @PostMapping("/review")
-    @Operation(summary = "Отзыв на фильм")
-    public void review(@RequestBody final NewReviewPayload review) {
-        filmService.review(review);
-    }
-
 }

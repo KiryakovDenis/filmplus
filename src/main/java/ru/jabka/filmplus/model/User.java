@@ -1,10 +1,8 @@
 package ru.jabka.filmplus.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import ru.jabka.filmplus.exception.BadRequestException;
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
@@ -12,7 +10,6 @@ public class User {
     private String name;
     private String email;
     private String login;
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     private Map<Long, String> friends = new HashMap<>();
 

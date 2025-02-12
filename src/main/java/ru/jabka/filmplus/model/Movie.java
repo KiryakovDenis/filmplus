@@ -6,8 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
-
-public class Film {
+public class Movie {
     private final Long id;
     private String name;
     private String description;
@@ -15,10 +14,9 @@ public class Film {
     private Long duration;
     private Genre genres;
     private Set<Long> likes = new HashSet<>();
-    private Set<Long> dislike = new HashSet<>();
     private List<Review> reviews = new ArrayList<>();
 
-    public Film(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
+    public Movie(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -84,21 +82,10 @@ public class Film {
     }
 
     public void like(Long userId){
-        this.dislike.remove(userId);
         this.likes.add(userId);
     }
-
-    public void dislike(Long userId) {
-        this.likes.remove(userId);
-        this.dislike.add(userId);
-    }
-
     public Integer getLikes() {
         return this.likes.size();
-    }
-
-    public Integer getDisikes() {
-        return this.dislike.size();
     }
 
     public void addReview(Review review) {

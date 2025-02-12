@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### GigaIDE ###
+.gigaide/
+.gigaide/gigaide.properties
+

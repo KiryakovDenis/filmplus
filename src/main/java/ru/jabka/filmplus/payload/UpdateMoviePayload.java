@@ -4,7 +4,7 @@ import ru.jabka.filmplus.model.Genre;
 
 import java.time.LocalDate;
 
-public class UpdateFilmPayload {
+public class UpdateMoviePayload {
     private final Long id;
     private String name;
     private String description;
@@ -12,7 +12,7 @@ public class UpdateFilmPayload {
     private Long duration;
     private Genre genres;
 
-    public UpdateFilmPayload(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
+    public UpdateMoviePayload(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
         this.id = id;
         this.name = name;
         this.description = description;

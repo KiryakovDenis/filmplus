@@ -1,7 +1,5 @@
 package ru.jabka.filmplus.payload;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDate;
 
 public class UpdateUserPayload {
@@ -9,7 +7,6 @@ public class UpdateUserPayload {
     private String name;
     private String email;
     private String login;
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     public UpdateUserPayload(Long id, String name, String email, String login, LocalDate birthday) {
