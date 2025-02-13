@@ -12,7 +12,7 @@ public class Movie {
     private String description;
     private LocalDate releaseDate;
     private Long duration;
-    private Genre genres;
+    private Genre genre;
     private Set<Long> likes = new HashSet<>();
     private List<Review> reviews = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class Movie {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.genres = genres;
+        this.genre = genres;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Movie {
                 ", description='" + description + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", duration=" + duration +
-                ", genres=" + genres +
+                ", genres=" + genre +
                 '}';
     }
 
@@ -57,8 +57,8 @@ public class Movie {
         return duration;
     }
 
-    public Genre getGenres() {
-        return genres;
+    public Genre getGenre() {
+        return genre;
     }
 
     public void setName(String name) {
@@ -77,8 +77,8 @@ public class Movie {
         this.duration = duration;
     }
 
-    public void setGenres(Genre genres) {
-        this.genres = genres;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 
     public void like(Long userId){

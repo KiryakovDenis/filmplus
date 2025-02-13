@@ -7,10 +7,11 @@ import ru.jabka.filmplus.exception.MovieNotFoundException;
 import ru.jabka.filmplus.model.Movie;
 import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.model.Review;
+import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.payload.LikePayload;
-import ru.jabka.filmplus.payload.NewMoviePayload;
+import ru.jabka.filmplus.payload.MoviePayload;
 import ru.jabka.filmplus.payload.NewReviewPayload;
-import ru.jabka.filmplus.payload.UpdateMoviePayload;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -20,14 +21,19 @@ import java.util.Set;
 public class MovieService {
 
     private static final Set<Movie> MOVIES = new HashSet<>();
+    private final UserService userService;
 
-    public Movie create(NewMoviePayload film) {
+    public MovieService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public Movie create(MoviePayload film) {
         Movie newMovie =  new Movie((long) MOVIES.size() + 1,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getGenres()
+                film.getGenre()
         );
 
         validate(newMovie);
@@ -37,18 +43,19 @@ public class MovieService {
     }
 
     public Movie getById(Long id) {
-        return this.MOVIES
+        return MOVIES
                 .stream().filter(f -> f.getId().equals(id))
                 .findFirst().orElseThrow(MovieNotFoundException.create(id));
     }
 
-    public Movie update(final UpdateMoviePayload film) {
+    public Movie update(final MoviePayload film) {
+
         Movie existMovie = getById(film.getId());
 
         existMovie.setName(film.getName());
         existMovie.setDescription(film.getDescription());
         existMovie.setDuration(film.getDuration());
-        existMovie.setGenres(film.getGenres());
+        existMovie.setGenre(film.getGenre());
         existMovie.setReleaseDate(film.getReleaseDate());
 
         validate(existMovie);
@@ -58,16 +65,16 @@ public class MovieService {
     }
 
     public void delete(final long id) {
-        this.MOVIES.remove(getById(id));
+        MOVIES.remove(getById(id));
     }
 
     public List<Movie> search(LocalDate beginDate,
                               LocalDate endDate,
                               Genre genre,
                               String name) {
-        return this.MOVIES.stream()
+        return MOVIES.stream()
                 .filter(f -> {
-                            boolean genreMatches = genre == null || f.getGenres().equals(genre);
+                            boolean genreMatches = genre == null || f.getGenre().equals(genre);
                             boolean nameMatches = !StringUtils.hasText(name) || f.getName().equals(name);
                             return genreMatches && nameMatches && dateMatches(f.getReleaseDate(), beginDate, endDate);
                         }
@@ -75,11 +82,13 @@ public class MovieService {
     }
 
     public void like(final LikePayload like) {
-        this.getById(like.getMovieId()).like(like.getUserId());
+        User existUser = userService.getById(like.getUserId());
+        getById(like.getMovieId()).like(like.getUserId());
     }
 
     public void review(NewReviewPayload review) {
-        this.getById(review.getFilmId()).addReview(new Review(review.getMessage(), review.getUserId()));
+        User existUser = userService.getById(review.getUserId());
+        getById(review.getMovieId()).addReview(new Review(review.getMessage(), review.getUserId()));
     }
 
     private void validate(Movie movie) {
@@ -92,7 +101,7 @@ public class MovieService {
         if (!StringUtils.hasText(movie.getDescription())) {
             throw new BadRequestException("Заполните описание фильма");
         }
-        if (movie.getGenres() == null) {
+        if (movie.getGenre() == null) {
             throw new BadRequestException("Укажите жанр");
         }
         if (movie.getReleaseDate() == null) {

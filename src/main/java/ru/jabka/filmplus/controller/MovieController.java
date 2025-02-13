@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.jabka.filmplus.model.Movie;
 import ru.jabka.filmplus.model.Genre;
-import ru.jabka.filmplus.payload.NewMoviePayload;
-import ru.jabka.filmplus.payload.UpdateMoviePayload;
+import ru.jabka.filmplus.payload.MoviePayload;
 import ru.jabka.filmplus.service.MovieService;
 import ru.jabka.filmplus.service.UserService;
 
@@ -36,26 +35,26 @@ public class MovieController {
 
     @PostMapping
     @Operation(summary = "Создать фильм")
-    public Movie create(@RequestBody final NewMoviePayload film) {
-        return this.movieService.create(film);
+    public Movie create(@RequestBody final MoviePayload film) {
+        return movieService.create(film);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Найти фильм по идентификатору")
     public Movie get(@PathVariable final Long id) {
-        return this.movieService.getById(id);
+        return movieService.getById(id);
     }
 
     @PatchMapping()
     @Operation(summary = "Обновление информации о фильме")
-    public Movie update(@RequestBody final UpdateMoviePayload film) {
-        return this.movieService.update(film);
+    public Movie update(@RequestBody final MoviePayload film) {
+        return movieService.update(film);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление фильма")
     public void delete(@PathVariable final Long id) {
-        this.movieService.delete(id);
+        movieService.delete(id);
     }
 
     @GetMapping
@@ -70,6 +69,6 @@ public class MovieController {
                                @Parameter(description = "Жанр фильма") Genre genre,
                               @RequestParam(required = false, name="name")
                                @Parameter(description = "Наименование фильма") String name) {
-        return this.movieService.search(beginDate, endDate, genre, name);
+        return movieService.search(beginDate, endDate, genre, name);
     }
 }

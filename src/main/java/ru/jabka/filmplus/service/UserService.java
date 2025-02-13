@@ -5,8 +5,7 @@ import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.payload.NewUserFriendPayload;
-import ru.jabka.filmplus.payload.NewUserPayload;
-import ru.jabka.filmplus.payload.UpdateUserPayload;
+import ru.jabka.filmplus.payload.UserPayload;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -16,7 +15,7 @@ public class UserService {
 
     private static final HashSet<User> users = new HashSet<>();
 
-    public User create(final NewUserPayload user) {
+    public User create(final UserPayload user) {
         User newUser = new User((long) users.size() + 1,
                 user.getName(),
                 user.getEmail(),
@@ -38,7 +37,7 @@ public class UserService {
         return user;
     }
 
-    public User update(final UpdateUserPayload user) {
+    public User update(final UserPayload user) {
         final User existUser = getById(user.getId());
         if (existUser == null) {
             return null;
@@ -59,6 +58,13 @@ public class UserService {
         }
     }
 
+    public User addFriend(final NewUserFriendPayload userFriendPayload) {
+        if (userFriendPayload.getUserId().equals(userFriendPayload.getFriendId())) {
+            throw new BadRequestException("Пользователь не может добавить в качестве друга самого себя");
+        }
+        return getById(userFriendPayload.getUserId()).addFriend(getById(userFriendPayload.getFriendId()));
+    }
+
     private void validate(final User user) {
         if (user == null) {
             throw new BadRequestException("Введите информацию о пользователе");
@@ -77,12 +83,5 @@ public class UserService {
         if (!StringUtils.hasText(user.getLogin())) {
             throw new BadRequestException("Необходимо указать логин пользователя!");
         }
-    }
-
-    public User addFriend(final NewUserFriendPayload userFriendPayload) {
-        if (userFriendPayload.getUserId().equals(userFriendPayload.getFriendId())) {
-            throw new BadRequestException("Пользователь не может добавить в качестве друга самого себя");
-        }
-        return getById(userFriendPayload.getUserId()).addFriend(getById(userFriendPayload.getFriendId()));
     }
 }

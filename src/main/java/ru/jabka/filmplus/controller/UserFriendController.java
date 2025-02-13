@@ -21,9 +21,9 @@ public class UserFriendController {
         this.userService = userService;
     }
 
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "Добавить пользователю друга")
     public User addFriend(@RequestBody NewUserFriendPayload userFriendPayload) {
-        return this.userService.addFriend(userFriendPayload);
+        return userService.addFriend(userFriendPayload);
     }
 }

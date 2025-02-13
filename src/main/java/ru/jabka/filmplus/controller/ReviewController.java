@@ -9,7 +9,7 @@ import ru.jabka.filmplus.payload.NewReviewPayload;
 import ru.jabka.filmplus.service.MovieService;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/api/v1/review")
 public class ReviewController {
 
     private final MovieService movieService;
@@ -18,7 +18,7 @@ public class ReviewController {
         this.movieService = movieService;
     }
 
-    @PostMapping("/review")
+    @PostMapping
     @Operation(summary = "Отзыв на фильм")
     public void review(@RequestBody final NewReviewPayload review) {
         movieService.review(review);

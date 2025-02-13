@@ -2,14 +2,14 @@ package ru.jabka.filmplus.payload;
 
 import java.time.LocalDate;
 
-public class UpdateUserPayload {
+public class UserPayload {
     private Long id;
     private String name;
     private String email;
     private String login;
     private LocalDate birthday;
 
-    public UpdateUserPayload(Long id, String name, String email, String login, LocalDate birthday) {
+    public UserPayload(Long id, String name, String email, String login, LocalDate birthday) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -17,7 +17,7 @@ public class UpdateUserPayload {
         this.birthday = birthday;
     }
 
-    public UpdateUserPayload() {
+    public UserPayload() {
     }
 
     public Long getId() {

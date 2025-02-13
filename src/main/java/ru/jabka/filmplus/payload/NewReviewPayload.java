@@ -2,12 +2,12 @@ package ru.jabka.filmplus.payload;
 
 public class NewReviewPayload {
     Long userId;
-    Long filmId;
+    Long movieId;
     String message;
 
     public NewReviewPayload(Long userId, Long filmId, String review) {
         this.userId = userId;
-        this.filmId = filmId;
+        this.movieId = filmId;
         this.message = review;
     }
 
@@ -21,12 +21,12 @@ public class NewReviewPayload {
         this.userId = userId;
     }
 
-    public Long getFilmId() {
-        return filmId;
+    public Long getMovieId() {
+        return movieId;
     }
 
-    public void setFilmId(Long filmId) {
-        this.filmId = filmId;
+    public void setMovieId(Long movieId) {
+        this.movieId = movieId;
     }
 
     public String getMessage() {

@@ -2,11 +2,11 @@ package ru.jabka.filmplus.payload;
 
 public class LikePayload {
     private Long userId;
-    private Long MovieId;
+    private Long movieId;
 
     public LikePayload(Long userId, Long movieId) {
         this.userId = userId;
-        MovieId = movieId;
+        this.movieId = movieId;
     }
 
     public Long getUserId() {
@@ -14,6 +14,6 @@ public class LikePayload {
     }
 
     public Long getMovieId() {
-        return MovieId;
+        return movieId;
     }
 }

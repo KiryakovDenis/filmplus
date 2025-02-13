@@ -9,7 +9,7 @@ import ru.jabka.filmplus.payload.LikePayload;
 import ru.jabka.filmplus.service.MovieService;
 
 @RestController
-@RequestMapping("/like")
+@RequestMapping("/api/v1/like")
 public class LikeController {
     private final MovieService movieService;
 
@@ -19,6 +19,6 @@ public class LikeController {
     @Operation(summary = "Лайк фильму")
     @PostMapping
     public void like(@RequestBody final LikePayload like) {
-        this.movieService.like(like);
+        movieService.like(like);
     }
 }

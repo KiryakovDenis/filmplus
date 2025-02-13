@@ -3,21 +3,21 @@ package ru.jabka.filmplus.payload;
 import ru.jabka.filmplus.model.Genre;
 import java.time.LocalDate;
 
-public class NewMoviePayload {
+public class MoviePayload {
     private final Long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private Long duration;
-    private Genre genres;
+    private Genre genre;
 
-    public NewMoviePayload(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
+    public MoviePayload(Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genre) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.genres = genres;
+        this.genre = genre;
     }
 
     public Long getId() {
@@ -56,11 +56,11 @@ public class NewMoviePayload {
         this.duration = duration;
     }
 
-    public Genre getGenres() {
-        return genres;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setGenres(Genre genres) {
-        this.genres = genres;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
 }

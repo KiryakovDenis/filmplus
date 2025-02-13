@@ -20,5 +20,4 @@ public class Review {
     public Long getUser() {
         return this.userId;
     }
-
 }
