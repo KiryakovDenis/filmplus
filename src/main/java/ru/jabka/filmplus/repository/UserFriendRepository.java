@@ -32,19 +32,21 @@ public class UserFriendRepository {
     private MapSqlParameterSource userFriendToSql(final UserFriend userFriend) {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        params.addValue("user_id", userFriend.userId());
-        params.addValue("friend_id", userFriend.friendId());
+        params.addValue("user_id", userFriend.getUserId());
+        params.addValue("friend_id", userFriend.getFriendId());
 
         return params;
     }
 
     private void handleDbExceptionMessage(final String message, final UserFriend userFriend) {
         if (message.contains("user_friend_user_friend_fk")) {
-            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", userFriend.friendId()));
+            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", userFriend.getFriendId()));
         } else if (message.contains("user_friend_user_user_fk")) {
-            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", userFriend.userId()));
+            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", userFriend.getUserId()));
         } else if (message.contains("user_friend_ch1")) {
             throw NoDataFoundException.create("Пользователь не может добавить в друзья сам себя");
+        } else {
+            throw DataBaseException.create(message);
         }
     }
 }

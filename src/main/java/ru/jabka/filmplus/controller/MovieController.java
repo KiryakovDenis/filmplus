@@ -28,45 +28,54 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieController {
 
-    public final MovieService filmService;
+    public final MovieService movieService;
     public final UserService userService;
 
     @PostMapping
     @Operation(summary = "Создать фильм")
     public Movie create(@RequestBody final Movie movie) {
-        return this.filmService.create(movie);
+        return movieService.create(movie);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Найти фильм по идентификатору")
     public Movie get(@PathVariable final Long id) {
-        return null;
+        return movieService.search(new SearchMoviePayload(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        ).stream()
+                .findFirst()
+                .get();
     }
 
     @PatchMapping()
     @Operation(summary = "Обновление информации о фильме")
     public Movie update(@RequestBody final Movie movie) {
-        return this.filmService.update(movie);
+        return movieService.update(movie);
     }
 
     @GetMapping
     @Operation(summary = "Поиск фильма по жанру, названию, или периода по дате выхода")
     public List<Movie> search(@RequestParam(required = false, name="id")
-                                @Parameter(description = "Идентификатор фильма") Long id,
+                              @Parameter(description = "Идентификатор фильма") Long id,
                               @RequestParam(required = false, name="begin_date")
-                                @JsonFormat(pattern = "yyyy-MM-dd")
-                                @Parameter(description = "Дата начала периода поиска фильмов") LocalDate beginDate,
+                              @JsonFormat(pattern = "yyyy-MM-dd")
+                              @Parameter(description = "Дата начала периода поиска фильмов") LocalDate beginDate,
                               @RequestParam(required = false, name="end_date")
-                                @JsonFormat(pattern = "yyyy-MM-dd")
-                                @Parameter(description = "Дата окончания периода поиска фильмов") LocalDate endDate,
+                              @JsonFormat(pattern = "yyyy-MM-dd")
+                              @Parameter(description = "Дата окончания периода поиска фильмов") LocalDate endDate,
                               @RequestParam(required = false, name="genre")
-                                @Parameter(description = "Жанр фильма") Genre genre,
+                              @Parameter(description = "Жанр фильма") Genre genre,
                               @RequestParam(required = false, name="title")
-                                @Parameter(description = "Наименование фильма") String title,
+                              @Parameter(description = "Наименование фильма") String title,
                               @RequestParam(required = false, name="duration")
-                                @Parameter(description = "Длительность фильма") Long duration) {
+                              @Parameter(description = "Длительность фильма") Long duration) {
         SearchMoviePayload searchParam = new SearchMoviePayload(id, beginDate, endDate, title, duration, genre);
 
-        return this.filmService.search(searchParam);
+        return movieService.search(searchParam);
     }
 }

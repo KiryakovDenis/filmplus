@@ -34,19 +34,19 @@ public class ReviewRepository {
     private MapSqlParameterSource reviewToSql(Review review) {
         final MapSqlParameterSource params = new MapSqlParameterSource();
 
-        params.addValue("user_id", review.userId());
-        params.addValue("movie_id", review.movieId());
-        params.addValue("review_text", review.reviewText());
-        params.addValue("review_date", review.reviewDate());
+        params.addValue("user_id", review.getUserId());
+        params.addValue("movie_id", review.getMovieId());
+        params.addValue("review_text", review.getReviewText());
+        params.addValue("review_date", review.getReviewDate());
 
         return params;
     }
 
     private void handleDbExceptionMessage(String message, Review review) {
         if (message.contains("review_user_fk")) {
-            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", review.userId()));
+            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", review.getUserId()));
         } else if (message.contains("review_movie_fk")) {
-            throw NoDataFoundException.create(String.format("Фильм не найден [id = %s]", review.movieId()));
+            throw NoDataFoundException.create(String.format("Фильм не найден [id = %s]", review.getMovieId()));
         }
     }
 }

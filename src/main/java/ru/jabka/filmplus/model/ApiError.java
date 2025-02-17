@@ -1,4 +1,10 @@
 package ru.jabka.filmplus.model;
 
-public record ApiError(String message) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class ApiError {
+    String message;
 }

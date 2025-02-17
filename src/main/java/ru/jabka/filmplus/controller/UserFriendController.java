@@ -11,7 +11,7 @@ import ru.jabka.filmplus.model.UserFriend;
 import ru.jabka.filmplus.service.UserFriendService;
 
 @RestController
-@RequestMapping("/api/v1/friends")
+@RequestMapping("/api/v1/friend")
 @RequiredArgsConstructor
 @Tag(name = "Друзья пользователей")
 public class UserFriendController {

@@ -7,9 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.exception.DataBaseException;
 import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.model.Movie;
+import ru.jabka.filmplus.payload.SearchMoviePayload;
 import ru.jabka.filmplus.repository.MovieRepository;
 
 import java.time.LocalDate;
@@ -35,6 +37,54 @@ public class MovieServiceTest {
             .duration(2L)
             .releaseDate(LocalDate.of(1987, 5, 22))
             .build();
+
+    private Movie emptyTitleMovie = Movie.builder()
+            .id(1L)
+            .genre(Genre.ACTION)
+            .releaseDate(LocalDate.of(2024, 1, 15))
+            .description("test")
+            .duration(4L)
+            .build();
+
+    private Movie emptyGenreMovie = Movie.builder()
+            .id(1L)
+            .title("test")
+            .releaseDate(LocalDate.of(2024, 1, 15))
+            .description("test")
+            .duration(4L)
+            .build();
+
+    private Movie emptyReleaseDateMovie = Movie.builder()
+            .id(1L)
+            .title("test")
+            .genre(Genre.ACTION)
+            .description("test")
+            .duration(4L)
+            .build();
+
+    private Movie emptyDescriptionMovie = Movie.builder()
+            .id(1L)
+            .title("test")
+            .genre(Genre.ACTION)
+            .releaseDate(LocalDate.of(2024, 1, 15))
+            .duration(4L)
+            .build();
+
+    private Movie emptyDurationMovie = Movie.builder()
+            .id(1L)
+            .title("test")
+            .genre(Genre.ACTION)
+            .releaseDate(LocalDate.of(2024, 1, 15))
+            .description("test")
+            .build();
+
+    SearchMoviePayload badPeriodPayload = new SearchMoviePayload(
+            LocalDate.of(2015, 04, 24),
+            LocalDate.of(2012, 01, 05),
+            "Good film",
+            2L,
+            Genre.DETECTIVE
+    );
 
     @Test
     @DisplayName("Успешное создание фильма")
@@ -85,4 +135,51 @@ public class MovieServiceTest {
         verify(movieRepository).update(validMovie);
     }
 
+    @Test
+    @DisplayName("Валидация пустого заголовка")
+    void createEmptyTitle_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.create(emptyTitleMovie);
+        });
+    }
+
+    @Test
+    @DisplayName("Валидация пустого жанра")
+    void createEmptyGenre_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.create(emptyGenreMovie);
+        });
+    }
+
+    @Test
+    @DisplayName("Валидация незаполненной даты выхода фильма")
+    void createReleaseDate_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.create(emptyReleaseDateMovie);
+        });
+    }
+
+    @Test
+    @DisplayName("Валидация пустого описания фильма")
+    void createDescription_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.create(emptyDescriptionMovie);
+        });
+    }
+
+    @Test
+    @DisplayName("Валидация незаполненной длительности фильма")
+    void createDuration_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.create(emptyDurationMovie);
+        });
+    }
+
+    @Test
+    @DisplayName("Валидация неверно заданного периода при поиске фильмов")
+    public void validateBadPeriodPayload_checkBadRequestException() {
+        BadRequestException brException = assertThrows(BadRequestException.class, () -> {
+            movieService.search(badPeriodPayload);
+        });
+    }
 }

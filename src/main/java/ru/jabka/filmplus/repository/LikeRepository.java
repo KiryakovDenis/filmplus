@@ -31,19 +31,21 @@ public class LikeRepository {
     private MapSqlParameterSource likePayloadToSql(Like like) {
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        params.addValue("user_id", like.userId());
-        params.addValue("movie_id", like.movieId());
+        params.addValue("user_id", like.getUserId());
+        params.addValue("movie_id", like.getMovieId());
 
         return params;
     }
 
     private void handleDbExceptionMessage(String message, Like like) {
         if (message.contains("like_user_fk")) {
-            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", like.userId()));
+            throw NoDataFoundException.create(String.format("Пользователь не найден [id = %s]", like.getUserId()));
         } else if (message.contains("like_movie_fk")) {
-            throw NoDataFoundException.create(String.format("Фильм не найден [id = %s]", like.movieId()));
+            throw NoDataFoundException.create(String.format("Фильм не найден [id = %s]", like.getMovieId()));
         } else if (message.contains("like_pk")) {
-            throw NoDataFoundException.create(String.format("Пользователь уже лайкнул фильм ранее [userId = %s; movieId = %s]", like.userId(), like.movieId()));
+            throw NoDataFoundException.create(String.format("Пользователь уже лайкнул фильм ранее [userId = %s; movieId = %s]", like.getUserId(), like.getMovieId()));
+        } else {
+            throw DataBaseException.create(message);
         }
     }
 }

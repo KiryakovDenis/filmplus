@@ -1,6 +1,10 @@
-package ru.jabka.filmplus.validator;
+package ru.jabka.filmplus.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.Review;
 
@@ -8,7 +12,8 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ReviewValidatorTest {
+@ExtendWith(MockitoExtension.class)
+public class ReviewServiceTest {
 
     private final Review emptyReviewText = new Review(
             "",
@@ -45,38 +50,46 @@ public class ReviewValidatorTest {
              null
     );
 
+    @InjectMocks
+    private ReviewService reviewService;
+
     @Test
+    @DisplayName("Валидация пустого текста отзыва")
     public void validateEmptyReviewText_checkBadRequestException() {
         BadRequestException brException = assertThrows(BadRequestException.class, () -> {
-            ReviewValidator.validate(emptyReviewText);
+            reviewService.create(emptyReviewText);
         });
     }
 
     @Test
+    @DisplayName("Валидация текста отзыва на null значение")
     public void validateNullReviewText_checkBadRequestException() {
         BadRequestException brException = assertThrows(BadRequestException.class, () -> {
-            ReviewValidator.validate(nullReviewText);
+            reviewService.create(nullReviewText);
         });
     }
 
     @Test
+    @DisplayName("Валидация незаполненного userId")
     public void validateNullUserIdText_checkBadRequestException() {
         BadRequestException brException = assertThrows(BadRequestException.class, () -> {
-            ReviewValidator.validate(nullUserId);
+            reviewService.create(nullUserId);
         });
     }
 
     @Test
+    @DisplayName("Валидация незаполненного MoiveId")
     public void validateNullMovieIdText_checkBadRequestException() {
         BadRequestException brException = assertThrows(BadRequestException.class, () -> {
-            ReviewValidator.validate(nullMovieId);
+            reviewService.create(nullMovieId);
         });
     }
 
     @Test
+    @DisplayName("Валидация незаполненной даты отзыва")
     public void validateReviewDateText_checkBadRequestException() {
         BadRequestException brException = assertThrows(BadRequestException.class, () -> {
-            ReviewValidator.validate(nullReviewDate);
+            reviewService.create(nullReviewDate);
         });
     }
 }

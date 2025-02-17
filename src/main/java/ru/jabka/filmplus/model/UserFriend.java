@@ -1,5 +1,11 @@
 package ru.jabka.filmplus.model;
 
-public record UserFriend (Long userId,
-                          Long friendId){
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class UserFriend {
+    private Long userId;
+    private Long friendId;
 }
