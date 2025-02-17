@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import ru.jabka.filmplus.model.User;
-import ru.jabka.filmplus.payload.UserPayload;
 import ru.jabka.filmplus.service.UserService;
 
 
@@ -28,7 +26,7 @@ public class UserController {
 
     @PostMapping
     @Operation(summary = "Создать пользователя")
-    public User create(@RequestBody final UserPayload user) {
+    public User create(@RequestBody final User user) {
         return userService.create(user);
     }
 
@@ -40,13 +38,7 @@ public class UserController {
 
     @PatchMapping
     @Operation(summary = "Обновление пользователя")
-    public User update(@RequestBody final UserPayload user) {
+    public User update(@RequestBody final User user) {
         return userService.update(user);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Удаление пользователя")
-    public void delete(@PathVariable final Long id) {
-        userService.delete(id);
     }
 }
