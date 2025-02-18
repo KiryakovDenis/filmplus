@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: filmplus
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DP_HOST:localhost}:${DP_PORT:5432}/${DB_NAME:filmplus}
+    username: ${DP_USERNAME:postgres}
+    password: ${DB_PWD}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui

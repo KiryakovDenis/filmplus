@@ -2,28 +2,25 @@ package ru.jabka.filmplus.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.jabka.filmplus.model.User;
-import ru.jabka.filmplus.payload.NewUserFriendPayload;
-import ru.jabka.filmplus.service.UserService;
+import ru.jabka.filmplus.model.UserFriend;
+import ru.jabka.filmplus.service.UserFriendService;
 
 @RestController
 @RequestMapping("/api/v1/friend")
+@RequiredArgsConstructor
 @Tag(name = "Друзья пользователей")
 public class UserFriendController {
 
-    private final UserService userService;
-
-    public UserFriendController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserFriendService userFriendService;
 
     @PostMapping
     @Operation(summary = "Добавить пользователю друга")
-    public User addFriend(@RequestBody NewUserFriendPayload userFriendPayload) {
-        return userService.addFriend(userFriendPayload);
+    public void addFriend(@RequestBody UserFriend userFriend) {
+        userFriendService.create(userFriend);
     }
 }

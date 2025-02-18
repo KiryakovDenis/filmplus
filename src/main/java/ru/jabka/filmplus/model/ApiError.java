@@ -1,20 +1,10 @@
 package ru.jabka.filmplus.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class ApiError {
-
-    final boolean success;
-    final String message;
-
-    public ApiError(final String message) {
-        this.success = false;
-        this.message = message;
-    }
-
-    public boolean isSuccess() {
-        return this.success;
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
+    String message;
 }
