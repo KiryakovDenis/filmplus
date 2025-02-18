@@ -43,7 +43,7 @@ public class MovieController {
         return movieService.getById(id);
     }
 
-    @PatchMapping()
+    @PatchMapping
     @Operation(summary = "Обновление информации о фильме")
     public Movie update(@RequestBody final Movie movie) {
         return movieService.update(movie);
