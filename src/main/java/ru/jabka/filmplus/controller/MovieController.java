@@ -74,7 +74,7 @@ public class MovieController {
                               @Parameter(description = "Наименование фильма") String title,
                               @RequestParam(required = false, name="duration")
                               @Parameter(description = "Длительность фильма") Long duration) {
-        SearchMoviePayload searchParam = new SearchMoviePayload(id, beginDate, endDate, title, duration, genre);
+        SearchMoviePayload searchParam = new SearchMoviePayload(beginDate, endDate, title, duration, genre);
 
         return movieService.search(searchParam);
     }
