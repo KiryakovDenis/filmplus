@@ -18,6 +18,12 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class MovieRepository {
+    private final String SELECT_BY_ID = """
+            SELECT *
+              FROM filmplus.movie a
+             WHERE a.id = :id;
+            """;
+
     private final String INSERT = """
             INSERT INTO filmplus.movie (title, description, release_date, duration, genre) 
             VALUES (:title, :description, :release_date, :duration, :genre) RETURNING *
@@ -71,7 +77,16 @@ public class MovieRepository {
             return jdbcTemplate.query(SELECT_FOR_SEARCH, searchMovieToSql(search), movieMapper);
         } catch (EmptyResultDataAccessException e) {
             throw NoDataFoundException.create(String.format("Фильмы по заданным условиям - не найдены [%s]", search.toString()));
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
 
+    public Movie getById(final Long id) {
+        try {
+            return jdbcTemplate.queryForObject(SELECT_BY_ID, new MapSqlParameterSource("id", id), movieMapper);
+        } catch (EmptyResultDataAccessException e) {
+            throw NoDataFoundException.create(String.format(String.format("Фильм не найден [id = %s]", id)));
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

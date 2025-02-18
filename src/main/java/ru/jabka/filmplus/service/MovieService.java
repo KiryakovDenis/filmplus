@@ -35,6 +35,11 @@ public class MovieService {
         return movieRepository.search(search);
     }
 
+    @Transactional(readOnly = true)
+    public Movie getById(final Long id) {
+        return movieRepository.getById(id);
+    }
+
     private void validate(Movie movie) {
         if (!StringUtils.hasText(movie.getTitle())) {
             throw new BadRequestException("Заполните наименование фильма");

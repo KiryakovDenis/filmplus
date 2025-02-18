@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import ru.jabka.filmplus.model.User;
 import ru.jabka.filmplus.service.UserService;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
 @Tag(name = "Пользователи")
-
 public class UserController {
 
     private final UserService userService;

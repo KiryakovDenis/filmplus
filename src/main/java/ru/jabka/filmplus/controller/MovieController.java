@@ -40,16 +40,7 @@ public class MovieController {
     @GetMapping("/{id}")
     @Operation(summary = "Найти фильм по идентификатору")
     public Movie get(@PathVariable final Long id) {
-        return movieService.search(new SearchMoviePayload(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        ).stream()
-                .findFirst()
-                .get();
+        return movieService.getById(id);
     }
 
     @PatchMapping()

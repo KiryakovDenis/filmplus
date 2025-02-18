@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.exception.DataBaseException;
+import ru.jabka.filmplus.exception.NoDataFoundException;
 import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.model.Movie;
 import ru.jabka.filmplus.payload.SearchMoviePayload;
@@ -110,10 +111,45 @@ public class MovieServiceTest {
         verify(movieRepository).update(validMovie);
     }
 
+    @Test
+    @DisplayName("Успешный поиск фильма по идентификатору")
+    public void getById_success() {
+        Mockito.when(movieRepository.getById(1L)).thenReturn(validMovie);
+
+        Movie result = movieService.getById(1L);
+
+        assertThat(result).isEqualTo(validMovie);
+
+        verify(movieRepository).getById(1L);
+    }
+
+    @Test
+    @DisplayName("Неудачный поиск фильма по идентификатору")
+    public void getById_DataNotFoundException() {
+        Mockito.when(movieRepository.getById(2L)).thenThrow(NoDataFoundException.class);
+
+        NoDataFoundException ndfException = assertThrows(NoDataFoundException.class, () -> {
+           movieService.getById(2L);
+        });
+
+        verify(movieRepository).getById(2L);
+    }
+
+    @Test
+    @DisplayName("Ошибка базы данных при получении фильма по id")
+    public void getById_BadRequestException() {
+        Mockito.when(movieRepository.getById(2L)).thenThrow(BadRequestException.class);
+
+        BadRequestException ndfException = assertThrows(BadRequestException.class, () -> {
+            movieService.getById(2L);
+        });
+
+        verify(movieRepository).getById(2L);
+    }
 
     @Test
     @DisplayName("Ошибка базы данных при создании фильма")
-    void createValidMovie_checkDataBaseException() {
+    public void createValidMovie_checkDataBaseException() {
         Mockito.when(movieRepository.insert(validMovie)).thenThrow(DataBaseException.class);
 
         DataBaseException dbException = assertThrows(DataBaseException.class, () -> {
